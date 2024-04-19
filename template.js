@@ -88,6 +88,20 @@ function rateTimeslot(action, element) {
     counterElement.innerText = currentCount + 1;
 
     console.log(`Rated ${action} for timeslot`); // Placeholder for server call
+    updateTimeslotColor(element.parentNode);
+}
+
+function updateTimeslotColor(td) {
+    const likes = parseInt(td.querySelector('.likes').innerText);
+    const dislikes = parseInt(td.querySelector('.dislikes').innerText);
+
+    if (likes > dislikes) {
+        td.style.backgroundColor = '#d4edda'; // Light green
+    } else if (likes < dislikes) {
+        td.style.backgroundColor = '#f8d7da'; // Light red
+    } else if (likes > 0 && dislikes == likes){
+        td.style.backgroundColor = '#fff3cd'; // Light orange
+    }
 }
 
 // function rateTimeslot(action, element) {

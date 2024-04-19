@@ -13,13 +13,17 @@ body, html {
 
 table {
     border-collapse: collapse;
-    width: 70%; /* Adjust the width as needed */
+    width: 70%;
 }
 
 th, td {
     border: 1px solid #dddddd;
     text-align: center;
     padding: 8px;
+}
+
+table td {
+    cursor: pointer; 
 }
 
 th {
@@ -57,5 +61,18 @@ tr:nth-child(even) {
 
 .shift-right {
     margin-left: 30%;
+}
+
+.fa-thumbs-up, .fa-thumbs-down {
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.fa-thumbs-up:hover, .fa-thumbs-down:hover {
+    color: #0a58ca; /* Change color on hover */
+}
+
+.likes, .dislikes {
+    margin-right: 10px;
 }
 

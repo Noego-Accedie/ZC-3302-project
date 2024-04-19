@@ -26,6 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "INSERT INTO Schedules (lecturer_id, schedule_name) VALUES ('$lecturerId', '$scheduleName')";
         if ($conn->query($sql) === TRUE) {
             $scheduleId = $conn->insert_id;
+
+            //insert timeslot into database
             $timeslots = [
                 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28
             ];
@@ -46,6 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt->close();
                 }
             }
+
+            
             
             // Redirect to the new schedule page
             header("Location: schedule_page.php?schedule_id=$scheduleId");

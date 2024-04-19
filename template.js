@@ -1,5 +1,3 @@
-let adminMode = false;
-
 window.onload = function() {
 
     // Function to toggle access form display
@@ -15,34 +13,48 @@ window.onload = function() {
 document.addEventListener('DOMContentLoaded', function() {
     const cells = document.querySelectorAll('table td');
     cells.forEach((cell, index) => {
-        fetchTimeslotInfo(index + 1).then(data => {
-            const { thumbsUp, thumbsDown, disabled } = data;
-
 
         // Create thumbs up icon
         const thumbsUpIcon = document.createElement('i');
         thumbsUpIcon.className = 'fa-regular fa-thumbs-up';
-        thumbsUpIcon.onclick = function() { rateTimeslot('up', this); };
+        thumbsUpIcon.onclick = function() { 
+            event.stopPropagation();
+            rateTimeslot('up', this); 
+        };
 
         // Create thumbs up counter
         const thumbsUpCounter = document.createElement('span');
         thumbsUpCounter.className = 'likes';
-        thumbsUpCounter.innerText = '0';
+        fetchThumbsUp(index + 1).then(countData => {
+            thumbsUpCounter.innerText = countData.thumbsUpCount;
+        });
 
         // Create thumbs down icon
         const thumbsDownIcon = document.createElement('i');
         thumbsDownIcon.className = 'fa-regular fa-thumbs-down';
-        thumbsDownIcon.onclick = function() { rateTimeslot('down', this); };
+        thumbsDownIcon.onclick = function() { 
+            event.stopPropagation();
+            rateTimeslot('down', this); 
+        };
 
         // Create thumbs down counter
         const thumbsDownCounter = document.createElement('span');
         thumbsDownCounter.className = 'dislikes';
-        thumbsDownCounter.innerText = '0';
+        fetchThumbsDown(index + 1).then(countData => {
+            thumbsDownCounter.innerText = countData.thumbsDownCount;
+        });
 
         //create disable button for admin
         const disableButton = document.createElement('button');
         disableButton.className = 'disableButton';
-        disableButton.innerText = 'Disable';
+        disableButton.classList.add("notshow");
+        fetchDisableButton(index + 1).then(status => {
+            console.log(status);
+            disableButton.innerText = status.status ? "Enable" : "Disable";
+            if (status.status){
+                disableButton.parentNode.classList.add("disabled");
+            }
+        });
         disableButton.setAttribute('data-timeslot-id', index + 1);
         
 
@@ -53,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cell.appendChild(thumbsDownCounter);
         cell.appendChild(disableButton);
     });
+
     const disableButtons = document.querySelectorAll('.disableButton');
     console.log(disableButtons);
     
@@ -63,10 +76,37 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleTimeslot(this, timeslotId);
         });
     });
+
 });
 
+function fetchThumbsUp(timeslotId){
+    return fetch(`thumbsup_count.php?timeslotId=${timeslotId}`)
+        .then(response => response.json())
+        .catch(error => console.error('error fetching thumbs up count', error));
+}
+
+function fetchThumbsDown(timeslotId){
+    return fetch(`thumbsdown_count.php?timeslotId=${timeslotId}`)
+        .then(response => response.json())
+        .catch(error => console.error('error fetching thumbs down count', error));
+}
+
+function fetchDisableButton(timeslotId){
+    return fetch(`disable_button_status.php?timeslotId=${timeslotId}`)
+        .then(response => response.json())
+        .catch(error => console.error('error fetching disable button status', error));
+}
+
+function adminMode(){
+    const disableButtons = document.querySelectorAll('.disableButton');
+
+    disableButtons.forEach(button => {
+       button.classList.remove("notshow");
+    });
+}
+
 function toggleTimeslot(buttonElement, timeslotId) {
-    // Update the UI immediately for better responsiveness
+    buttonElement.textContent = buttonElement.textContent.includes('Disable') ? 'Enable' : 'Disable';
     console.log("toggletimeslot");
 
 
@@ -78,15 +118,15 @@ function toggleTimeslot(buttonElement, timeslotId) {
         }
     })
     .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Toggle the class for visual feedback
-            buttonElement.closest('td').classList.toggle('disabled');
-            buttonElement.textContent = buttonElement.textContent.includes('Enable') ? 'Disable' : 'Enable';
-        } else {
-            // Handle failure
-            alert('Could not update timeslot.');
-        }
+    .then(data => { 
+    if (data.success) {
+        buttonElement.parentNode.classList.toggle('disabled');
+    } else {
+        buttonElement.textContent = buttonElement.textContent.includes('Disable') ? 'Enable' : 'Disable';
+        console.error('Toggle request failed:', data.error);
+        alert('Failed to toggle timeslot. Please try again.');
+    }
+        
     })
     .catch(error => {
         console.error('Error:', error);
@@ -151,7 +191,7 @@ function checkUsername() {
             passwordField.style.display = 'block';
             if(password != ""){
                 console.log(password != "");
-                adminMode = true;
+                adminMode();
                 document.querySelector('.access_form').classList.toggle("notshow");
                 // if (data.isPasswordCorrect) {
                 //     // Password is correct
@@ -256,14 +296,13 @@ function rateTimeslot(action, element) {
 function updateTimeslotColor(td) {
     const likes = parseInt(td.querySelector('.likes').innerText);
     const dislikes = parseInt(td.querySelector('.dislikes').innerText);
-    if (likes > 0 && dislikes == likes){
-        td.style.backgroundColor = '#fff3cd'; // Light orange
-    }
-    else if (dislikes > 0) {
+    if (dislikes > likes/5) {
         td.style.backgroundColor = '#f8d7da'; // Light red
     }
-    else if (likes > 0) {
+    else if (likes > dislikes/2) {
         td.style.backgroundColor = '#d4edda'; // Light green
+    } else{
+            td.style.backgroundColor = '#fff3cd'; // Light orange
     }
 }
 

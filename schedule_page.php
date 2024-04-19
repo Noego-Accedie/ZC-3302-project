@@ -53,9 +53,7 @@ $scheduleId = $_GET['schedule_id'];
         </div>
     </section>
 
-    <section>Admin notes: </section>
-
-    <section class="access_form disabled">
+    <!-- <section class="access_form notshow">
         <div class="overlay">
             <form id="participantForm" method="post">
                 <input type="text" id="participant_username" name="participant_username" placeholder="Enter Username" required>
@@ -63,7 +61,7 @@ $scheduleId = $_GET['schedule_id'];
                 <button type="button" onclick="checkUsername()">Access Schedule</button>
             </form>
         </div>
-    </section>
+    </section> -->
 
     <script src="template.js"></script>
 </body>

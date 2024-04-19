@@ -100,7 +100,17 @@ tr:nth-child(even) {
     align-items: center;
 }
 
-.disabled{
+.disabled {
+    background-color: #000; /* or any color to indicate disabled */
+    color: #fff;
+    pointer-events: none;
+}
+
+td button{
+    pointer-events: all !important; 
+}
+
+.notshow{
     display: none;
 }
 
@@ -133,6 +143,10 @@ tr:nth-child(even) {
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 5px;
+}
+
+.displayButton{
+    display: block;
 }
 
 

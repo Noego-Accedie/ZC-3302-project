@@ -5,7 +5,7 @@ window.onload = function() {
     // Function to toggle access form display
     function toggleAccessForm() {
         const accessForm = document.querySelector('.access_form');
-        accessForm.classList.toggle('disabled');
+        accessForm.classList.toggle('notshow');
     }
 
     toggleAccessForm();
@@ -14,7 +14,11 @@ window.onload = function() {
 //create the items inside each time slot
 document.addEventListener('DOMContentLoaded', function() {
     const cells = document.querySelectorAll('table td');
-    cells.forEach(cell => {
+    cells.forEach((cell, index) => {
+        fetchTimeslotInfo(index + 1).then(data => {
+            const { thumbsUp, thumbsDown, disabled } = data;
+
+
         // Create thumbs up icon
         const thumbsUpIcon = document.createElement('i');
         thumbsUpIcon.className = 'fa-regular fa-thumbs-up';
@@ -35,13 +39,61 @@ document.addEventListener('DOMContentLoaded', function() {
         thumbsDownCounter.className = 'dislikes';
         thumbsDownCounter.innerText = '0';
 
+        //create disable button for admin
+        const disableButton = document.createElement('button');
+        disableButton.className = 'disableButton';
+        disableButton.innerText = 'Disable';
+        disableButton.setAttribute('data-timeslot-id', index + 1);
+        
+
         // Append icons and counters to each cell
         cell.appendChild(thumbsUpIcon);
         cell.appendChild(thumbsUpCounter);
         cell.appendChild(thumbsDownIcon);
         cell.appendChild(thumbsDownCounter);
+        cell.appendChild(disableButton);
+    });
+    const disableButtons = document.querySelectorAll('.disableButton');
+    console.log(disableButtons);
+    
+    disableButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            event.stopPropagation();
+            const timeslotId = this.getAttribute('data-timeslot-id');
+            toggleTimeslot(this, timeslotId);
+        });
     });
 });
+
+function toggleTimeslot(buttonElement, timeslotId) {
+    // Update the UI immediately for better responsiveness
+    console.log("toggletimeslot");
+
+
+    fetch('toggle_timeslot.php', {
+        method: 'POST',
+        body: JSON.stringify({ timeslotId: timeslotId }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Toggle the class for visual feedback
+            buttonElement.closest('td').classList.toggle('disabled');
+            buttonElement.textContent = buttonElement.textContent.includes('Enable') ? 'Disable' : 'Enable';
+        } else {
+            // Handle failure
+            alert('Could not update timeslot.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred.');
+    });
+}
+
 
 // Function to toggle the visibility of the comment section
 function toggleCommentSection() {
@@ -100,10 +152,10 @@ function checkUsername() {
             if(password != ""){
                 console.log(password != "");
                 adminMode = true;
-                document.querySelector('.access_form').classList.toggle("disabled");
+                document.querySelector('.access_form').classList.toggle("notshow");
                 // if (data.isPasswordCorrect) {
                 //     // Password is correct
-                //     document.querySelector('.access_form').classList.toggle("disabled");
+                //     document.querySelector('.access_form').classList.toggle("notshow");
                 // } else if (data.isPasswordCorrect == false) {
                 //     // Password is incorrect, show an error message or take appropriate action
                 //     console.log('Incorrect password');
@@ -134,7 +186,7 @@ function checkUsername() {
             //         console.log(data.isPasswordCorrect);
             //         if (data.isPasswordCorrect) {
             //             // Password is correct
-            //             document.querySelector('.access_form').classList.toggle("disabled");
+            //             document.querySelector('.access_form').classList.toggle("notshow");
             //         } else {
             //             // Password is incorrect, show an error message or take appropriate action
             //             console.log('Incorrect password');
@@ -162,7 +214,7 @@ function checkUsername() {
             .then(data => {
                 // Handle the form submission response data
                 console.log(data);
-                document.querySelector('.access_form').classList.toggle("disabled");
+                document.querySelector('.access_form').classList.toggle("notshow");
             })
             .catch(error => console.error('Error:', error));
         } 

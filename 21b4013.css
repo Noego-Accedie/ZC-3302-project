@@ -6,7 +6,7 @@ html, body {
 }
 
 body {
-    background: linear-gradient(0deg, rgba(235, 233, 233, 1) 0%, rgba(255, 255, 255, 1) 48%, rgba(235, 233, 233, 1) 100%);
+    background: linear-gradient(0deg, rgb(209, 209, 209) 0%, rgba(255, 255, 255, 1) 48%, rgb(209, 209, 209) 100%);
     text-align: center;
 }
 
@@ -27,14 +27,14 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-#Schedule_Creator form {
+form {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px; /* Provides consistent spacing between form elements */
 }
 
-#Schedule_Creator input[type="text"] {
+input {
     width: 80%; /* Responsive width */
     padding: 10px;
     border: 2px solid #B3E5FC; /* Light blue border */
@@ -43,7 +43,7 @@ body {
     font-size: 1em;
 }
 
-#Schedule_Creator button {
+button {
     width: 50%;
     padding: 10px;
     border: none;
@@ -53,10 +53,10 @@ body {
     cursor: pointer;
     font-size: 1.1em;
     font-weight: bold;
-    transition: background-color 0.3s;
+    transition: background-color 1s;
 }
 
-#Schedule_Creator button:hover {
+button:hover {
     background-color: #29B6F6; /* Slightly darker on hover for interaction feedback */
 }
 

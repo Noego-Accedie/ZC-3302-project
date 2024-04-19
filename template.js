@@ -30,10 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-
-
-
 // Function to toggle the visibility of the comment section
 function toggleCommentSection() {
     var commentSection = document.getElementById("commentSection");
@@ -94,13 +90,14 @@ function rateTimeslot(action, element) {
 function updateTimeslotColor(td) {
     const likes = parseInt(td.querySelector('.likes').innerText);
     const dislikes = parseInt(td.querySelector('.dislikes').innerText);
-
-    if (likes > dislikes) {
-        td.style.backgroundColor = '#d4edda'; // Light green
-    } else if (likes < dislikes) {
-        td.style.backgroundColor = '#f8d7da'; // Light red
-    } else if (likes > 0 && dislikes == likes){
+    if (likes > 0 && dislikes == likes){
         td.style.backgroundColor = '#fff3cd'; // Light orange
+    }
+    else if (dislikes > 0) {
+        td.style.backgroundColor = '#f8d7da'; // Light red
+    }
+    else if (likes > 0) {
+        td.style.backgroundColor = '#d4edda'; // Light green
     }
 }
 

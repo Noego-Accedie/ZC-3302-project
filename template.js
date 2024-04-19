@@ -1,3 +1,16 @@
+let adminMode = false;
+
+window.onload = function() {
+
+    // Function to toggle access form display
+    function toggleAccessForm() {
+        const accessForm = document.querySelector('.access_form');
+        accessForm.classList.toggle('disabled');
+    }
+
+    toggleAccessForm();
+}
+
 //create the items inside each time slot
 document.addEventListener('DOMContentLoaded', function() {
     const cells = document.querySelectorAll('table td');
@@ -57,6 +70,107 @@ function loadCommentsForTimeslot(timeslotIndex) {
     // For now, we'll just simulate with a placeholder
     document.getElementById("commentsList").innerHTML = `<p>Loading comments for timeslot ${timeslotIndex}...</p>`;
 }
+
+function checkUsername() {
+    event.preventDefault();
+    console.log('checkusername');
+    const username = document.getElementById('participant_username').value;
+    const passwordField = document.getElementById('participant_password');
+    const password = document.getElementById('participant_password').value;
+    console.log(password);
+    
+    // // Send an AJAX request to check if the username is a lecturer
+    fetch('check_lecturer2.php', {
+        method: 'POST',
+        body: JSON.stringify({ username: username }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response error');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.isLecturer) {
+            passwordField.style.display = 'block';
+            if(password != ""){
+                console.log(password != "");
+                adminMode = true;
+                document.querySelector('.access_form').classList.toggle("disabled");
+                // if (data.isPasswordCorrect) {
+                //     // Password is correct
+                //     document.querySelector('.access_form').classList.toggle("disabled");
+                // } else if (data.isPasswordCorrect == false) {
+                //     // Password is incorrect, show an error message or take appropriate action
+                //     console.log('Incorrect password');
+                //     console.log(data.isPasswordCorrect);
+                //     window.alert("Wrong username/password");
+                // }
+                // else{
+                //     window.alert("???");
+                // }
+        }
+            
+            // if(password != ""){
+            //     console.log("check password");
+            //     fetch('check_password.php', {
+            //         method: 'POST',
+            //         body: JSON.stringify({ username: username, password: password }),
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         }
+            //     })
+            //     .then(response => {
+            //         if (!response.ok) {
+            //             throw new Error('Network response error');
+            //         }
+            //         return response.json();
+            //     })
+            //     .then(data => {
+            //         console.log(data.isPasswordCorrect);
+            //         if (data.isPasswordCorrect) {
+            //             // Password is correct
+            //             document.querySelector('.access_form').classList.toggle("disabled");
+            //         } else {
+            //             // Password is incorrect, show an error message or take appropriate action
+            //             console.log('Incorrect password');
+            //             window.alert("Wrong username/password");
+            //         }
+            //     })
+            //     .catch(error => console.error('Error:', error));
+            // }
+
+        } else {
+            // If it's not a lecturer, submit the form using AJAX
+            const form = document.getElementById('participantForm');
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response error');
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Handle the form submission response data
+                console.log(data);
+                document.querySelector('.access_form').classList.toggle("disabled");
+            })
+            .catch(error => console.error('Error:', error));
+        } 
+    })
+    .catch(error => console.error('Error:', error));
+    
+}
+
 
 //TODO
 //use this with the database
